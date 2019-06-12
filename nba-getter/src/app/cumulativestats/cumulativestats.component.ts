@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Stats } from "../stats";
-import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';;
+import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';
+import { Cumulativestat } from '../cumulativestatadjusted';
+import { ConsoleReporter } from 'jasmine';
+;
 
 
 @Component({
@@ -11,17 +14,20 @@ import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';;
 })
 export class CumulativestatsComponent {
   stats:Stats = new Stats;
+  cumulativeStat:Cumulativestat = new Cumulativestat;
   firstName:string;
   lastName:string;
   constructor(private http: HttpClient) { }
   private api: GridApi;
   private columnApi: ColumnApi;
+  private userPic: string;
 
   gridOptions = {
     defaultColDef: {
         resizable: true
     },
     columnDefs:[
+      {headerName: 'Match', field: 'matchDescription', sortable: true, filter: true, resizable: true},
       {headerName: 'Assists', field: 'assists', sortable: true, filter: true, resizable: true},
       {headerName: 'blocks', field: 'blocks', sortable: true, filter: true, resizable: true},
       {headerName: 'defReb', field: 'defReb', sortable: true, filter: true, resizable: true},
@@ -34,16 +40,13 @@ export class CumulativestatsComponent {
       {headerName: 'fta', field: 'fta', sortable: true, filter: true, resizable: true},
       {headerName: 'ftm', field: 'ftm', sortable: true, filter: true, resizable: true},
       {headerName: 'ftp', field: 'ftp', sortable: true, filter: true, resizable: true},
-      {headerName: 'isOnCourt', field: 'isOnCourt', sortable: true, filter: true, resizable: true},
       {headerName: 'min', field: 'min', sortable: true, filter: true, resizable: true},
       {headerName: 'offReb', field: 'offReb', sortable: true, filter: true, resizable: true},
       {headerName: 'pFouls', field: 'pFouls', sortable: true, filter: true, resizable: true},
-      {headerName: 'personId', field: 'personId', sortable: true, filter: true, resizable: true},
       {headerName: 'plusMinus', field: 'plusMinus', sortable: true, filter: true, resizable: true},
       {headerName: 'points', field: 'points', sortable: true, filter: true, resizable: true},
       {headerName: 'pos', field: 'pos', sortable: true, filter: true, resizable: true},
       {headerName: 'steals', field: 'steals', sortable: true, filter: true, resizable: true},
-      {headerName: 'teamId', field: 'teamId', sortable: true, filter: true, resizable: true},
       {headerName: 'totReb', field: 'totReb', sortable: true, filter: true, resizable: true},
       {headerName: 'tpa', field: 'tpa', sortable: true, filter: true, resizable: true},
       {headerName: 'tpm', field: 'tpm', sortable: true, filter: true, resizable: true},
@@ -62,10 +65,11 @@ rowData: any = [];
 
 search() {
   this.http.get<Stats>('http://localhost:8080/player/timeline?end=2019-08-04&name='+this.firstName+'&start=2012-08-04&surname='+this.lastName+'').subscribe(data => {
-  console.log("ENTER");
+  console.log(data);
   this.gridOptions.rowData = data.stats;
+  this.cumulativeStat = data.cumulativeStats;
   this.columnApi.autoSizeAllColumns();
-  console.log(this.gridOptions.rowData);
+this.userPic = 'https://nba-players.herokuapp.com/players/'+this.lastName+'/'+this.firstName;
   }, err => {
   console.log("SHIT");
 });

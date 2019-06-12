@@ -1,0 +1,15 @@
+<div class="container">
+<div class="row border border-primary rounded p-2">
+  <div class="row-sm-6"> 
+      <form>
+        First Name:<br>
+        <input type="text" [(ngModel)]="firstName" [ngModelOptions]="{standalone: true}"><br>
+        Last Name:<br>
+        <input type="text" [(ngModel)]="lastName"[ngModelOptions]="{standalone: true}">
+
+      </form>
+  </div>
+</div>
+<canvas id="myChart" width="2400" height="1400"></canvas>
+<button type="button" ngbButton (click)="search()" class="btn btn-danger btn-lg btn-block">Search</button>
+</div>

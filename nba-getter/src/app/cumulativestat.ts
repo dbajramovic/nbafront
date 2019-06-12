@@ -23,5 +23,6 @@ export class Cumulativestat {
     tpa: number;
     tpm: number;
     tpp: number;
-    turnovers: number
+    turnovers: number;
+    matchDescription: string;
 }
