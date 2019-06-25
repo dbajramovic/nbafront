@@ -15,6 +15,7 @@ import { PlayerSalaryPair } from '../PlayerSalaryPair';
 })
 
 export class GamepriceComponent {
+  [x: string]: any;
 
   games:Game[] = [];
 
@@ -29,9 +30,6 @@ export class GamepriceComponent {
   gameId:string = "";
   homeSturcture: PlayerSalaryPair;
   awayStructure: PlayerSalaryPair;
-  private api: GridApi;
-  private columnApi: ColumnApi;
-  private userPic: string;
  
   constructor(private http: HttpClient) {
     this.dataSource = Observable.create((observer: any) => {
@@ -51,6 +49,7 @@ export class GamepriceComponent {
       })
     );
   }
+  
   search() {
     this.http.get<Game[]>('http://localhost:8080/games/light?year='+this.year).subscribe(data => {
       this.games = data;
@@ -105,8 +104,6 @@ export class GamepriceComponent {
   };
   
   private onReady(params) {
-    this.api = params.api;
-    this.columnApi = params.columnApi;
 }
 rowData: any = [];
 }

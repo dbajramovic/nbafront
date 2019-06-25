@@ -15,6 +15,7 @@ import { CumulativestatsComponent } from './cumulativestats/cumulativestats.comp
 import { TimelineComponent } from './timeline/timeline.component';
 import { AppRoutingModule } from './app-routing.module';
 import { GamepriceComponent } from './gameprice/gameprice.component';
+import { TeamrosterComponent } from './teamroster/teamroster.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { GamepriceComponent } from './gameprice/gameprice.component';
     PlayersComponent,
     CumulativestatsComponent,
     TimelineComponent,
-    GamepriceComponent
+    GamepriceComponent,
+    TeamrosterComponent
   ],
   imports: [
     BrowserModule,

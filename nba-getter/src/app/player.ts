@@ -13,11 +13,12 @@ export class Player {
     weightKilograms: number;
     dateOfBirthUTC :any;
     nbaDebutYear: string;
-    yearsPro;
+    yearsPro:string;
     collegeName: string;
     lastAffliation: string;
     country: string;
     team : number;
 	teamName : string;
     year: string;
+    salary:string;
 }

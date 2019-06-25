@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Stats } from "../stats";
 import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';
 import { Cumulativestat } from '../cumulativestatadjusted';
-import { ConsoleReporter } from 'jasmine';
 ;
 
 
