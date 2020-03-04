@@ -31,6 +31,7 @@
         [columnDefs]="gridOptions.columnDefs"
         (gridReady)="onReady($event)">
     </ag-grid-angular>
+    <div class="row-sm-6"><h1>Total Salary:{{roster.totalSalary}}</h1></div>
     <br>
     <button type="button" ngbButton (click)="search()" class="btn btn-danger btn-lg btn-block">Search</button>
     </div>

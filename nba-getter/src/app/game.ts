@@ -17,4 +17,5 @@ export class Game {
       notebookAvailable:string;
       tntOt:string;
       matchDescription:string;
+      id:string;
 }

@@ -4,9 +4,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { mergeMap } from 'rxjs/operators';
-import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';
 import { GamePriceStructure } from '../GamePriceStructure';
 import { PlayerSalaryPair } from '../PlayerSalaryPair';
+import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-gameprice',
@@ -22,18 +23,20 @@ export class GamepriceComponent {
   asyncSelected: string;
   typeaheadLoading: boolean;
   typeaheadNoResults: boolean;
-  year:string;
+  years:string[] = [
+    "2020","2019", "2018", "2017", "2016"
+  ]
+  selectedYear:string;
   yearIsSelected: boolean = false;
   priceIsSelected: boolean = false;
   dataSource: Observable<any>;
   statesComplex: any[] = [];
   gameId:string = "";
-  homeSturcture: PlayerSalaryPair;
-  awayStructure: PlayerSalaryPair;
+  homeSturcture: PlayerSalaryPair = new PlayerSalaryPair();
+  awayStructure: PlayerSalaryPair = new PlayerSalaryPair();
  
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private toastr: ToastrService, private spinner: NgxSpinnerService) {
     this.dataSource = Observable.create((observer: any) => {
-      // Runs on every search
       observer.next(this.asyncSelected);
     })
       .pipe(
@@ -49,25 +52,20 @@ export class GamepriceComponent {
       })
     );
   }
+
+  onChange(newValue) {
+    this.selectedYear = newValue;
+    this.search();
+  }
   
   search() {
-    this.http.get<Game[]>('http://localhost:8080/games/light?year='+this.year).subscribe(data => {
+    this.spinner.show();
+    this.http.get<Game[]>('http://localhost:8080/games/light?year='+this.selectedYear).subscribe(data => {
       this.games = data;
       this.yearIsSelected = true;
+      this.spinner.hide();
       }, err => {
-      console.log("SHIT");
-    });
-  }
-  searchGamePrice() {
-    this.http.get<GamePriceStructure>('http://localhost:8080/getPriceOfGame?gameId='+this.gameId).subscribe(data => {
-      console.log(data);
-      this.gridOptionsHome.rowData = data.homeTeamPrice;
-      this.gridOptionsAway.rowData = data.visitorTeamPrice;
-      this.homeSturcture = data.teamPriceMap[0];
-      this.awayStructure = data.teamPriceMap[1];
-      this.priceIsSelected = true;
-      }, err => {
-      console.log("SHIT");
+        this.toastr.error("SHIT");
     });
   }
  
@@ -76,7 +74,20 @@ export class GamepriceComponent {
   }
  
   typeaheadOnSelect(e: TypeaheadMatch): void {
+    if(this.gameId != null) {
     this.gameId = this.games.find(x => x.matchDescription === e.value).gameId;
+    this.spinner.show();
+    this.http.get<GamePriceStructure>('http://localhost:8080/getPriceOfGame?gameId='+this.gameId).subscribe(data => {
+      this.gridOptionsHome.rowData = data.homeTeamPrice;
+      this.gridOptionsAway.rowData = data.visitorTeamPrice;
+      this.homeSturcture = data.teamPriceMap[0];
+      this.awayStructure = data.teamPriceMap[1];
+      this.priceIsSelected = true;
+      this.spinner.hide();
+          }, err => {
+        this.toastr.error("SHIT");
+    });
+    }
   }
 
   gridOptionsHome = {
@@ -85,7 +96,7 @@ export class GamepriceComponent {
     },
     columnDefs:[
       {headerName: 'Player Name', field: 'name', sortable: true, filter: true, resizable: true},
-      {headerName: 'Salary', field: 'value', sortable: true, filter: true, resizable: true},
+      {headerName: 'Salary ($)', field: 'formattedValue', sortable: true, filter: true, resizable: true},
   ],
     rowData: null,
     onGridReady: function(event) { console.log('the grid is now ready'); },
@@ -97,13 +108,15 @@ export class GamepriceComponent {
     },
     columnDefs:[
       {headerName: 'Player Name', field: 'name', sortable: true, filter: true, resizable: true},
-      {headerName: 'Salary', field: 'value', sortable: true, filter: true, resizable: true},
+      {headerName: 'Salary ($)', field: 'formattedValue', sortable: true, filter: true, resizable: true},
   ],
     rowData: null,
     onGridReady: function(event) { console.log('the grid is now ready'); },
   };
   
-  private onReady(params) {
+   onReady(params) {
 }
 rowData: any = [];
+
+
 }

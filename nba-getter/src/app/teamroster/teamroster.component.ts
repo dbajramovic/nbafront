@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TeamRoster } from '../teamroster';
 import { Observable, of } from 'rxjs';
-import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import * as typeahead from 'ngx-bootstrap/typeahead';
 import { mergeMap } from 'rxjs/operators';
 import { Team } from '../team';
 
@@ -17,7 +17,7 @@ export class TeamrosterComponent implements OnInit {
 
   year:string;
   nickname:string = "";
-  roster:TeamRoster;
+  roster:TeamRoster = new TeamRoster;
   dataSource: Observable<any>;
   asyncSelected: string;
   typeaheadLoading: boolean;
@@ -48,7 +48,7 @@ export class TeamrosterComponent implements OnInit {
     this.typeaheadLoading = e;
   }
  
-  typeaheadOnSelect(e: TypeaheadMatch): void {
+  typeaheadOnSelect(e: typeahead.TypeaheadMatch): void {
     console.log(this.nickname);
     console.log(this.teams);
     console.log(e.value);

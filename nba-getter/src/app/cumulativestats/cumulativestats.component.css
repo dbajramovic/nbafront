@@ -11,3 +11,7 @@ table tr:nth-child(odd) {
 table tr:nth-child(even) {
   background-color: #ffffff;
 }
+
+h3 {
+  font-family: 'Orbitron', sans-serif;
+}

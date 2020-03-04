@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/nba-getter",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -24,6 +25,7 @@
             ],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+			  "./node_modules/ngx-toastr/toastr.css",
               "src/styles.css"
             ],
             "scripts": [],
@@ -51,6 +53,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -134,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "nba-getter"
+  "defaultProject": "nba-getter",
+  "cli": {
+    "analytics": "77246d8e-6d7d-493f-aaf9-cc8d6dc24b75"
+  }
 }

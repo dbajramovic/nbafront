@@ -1,9 +1,14 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Stats } from "../stats";
-import { GridOptions, GridApi, ColumnApi } from 'ag-grid-community';
+import {  GridApi, ColumnApi } from 'ag-grid-community';
 import { Cumulativestat } from '../cumulativestatadjusted';
-;
+import { PlayerLight } from '../PlayerLight';
+import { Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -12,14 +17,67 @@ import { Cumulativestat } from '../cumulativestatadjusted';
   styleUrls: ['./cumulativestats.component.css']
 })
 export class CumulativestatsComponent {
+  players:PlayerLight[] = [];
   stats:Stats = new Stats;
   cumulativeStat:Cumulativestat = new Cumulativestat;
   firstName:string;
   lastName:string;
-  constructor(private http: HttpClient) { }
   private api: GridApi;
   private columnApi: ColumnApi;
-  private userPic: string;
+  userPic: string;
+  dataSource: Observable<any>;
+  asyncSelected: string;
+  typeaheadLoading: boolean;
+  typeaheadNoResults: boolean;
+  fullName:string = "";
+  foundPlayer : PlayerLight;
+
+  constructor(private http: HttpClient, private toastr: ToastrService, private spinner: NgxSpinnerService) {
+
+    this.dataSource = Observable.create((observer: any) => {
+      observer.next(this.asyncSelected);
+    })
+      .pipe(
+        mergeMap((token: string) => this.getStatesAsObservable(token))
+      );
+   }
+
+   getStatesAsObservable(token: string): Observable<any> {
+    const query = new RegExp(token, 'i');
+    return of(
+      this.players.filter((state: PlayerLight) => {
+        return query.test(state.fullName.concat(" ").concat(state.fullName));
+      })
+    );
+  }
+
+  changeTypeaheadLoading(e: boolean): void {
+    this.typeaheadLoading = e;
+  }
+ 
+  typeaheadOnSelect(e: TypeaheadMatch): void {
+    this.foundPlayer = this.players.find(x => x.fullName === e.value);
+    this.spinner.show();
+    this.http.get<Stats>('http://localhost:8080/player/timeline?end=2019-08-04&name='+this.foundPlayer.firstName+'&start=2012-08-04&surname='+this.foundPlayer.lastName+'').subscribe(data => {
+      console.log(data);
+      this.gridOptions.rowData = data.stats;
+      this.cumulativeStat = data.cumulativeStats;
+      this.columnApi.autoSizeAllColumns();
+    this.userPic = 'https://nba-players.herokuapp.com/players/'+this.foundPlayer.lastName+'/'+this.foundPlayer.firstName;
+    this.toastr.success("Player stats loaded");
+    this.spinner.hide();
+      }, err => {
+      this.toastr.error("SHIT");
+    });
+  }
+
+  showSpinner() {
+    this.spinner.show();
+    setTimeout(() => {
+      this.spinner.hide();
+    }, 3000);
+  }
+
 
   gridOptions = {
     defaultColDef: {
@@ -56,22 +114,18 @@ export class CumulativestatsComponent {
     onGridReady: function(event) { console.log('the grid is now ready'); },
   };
   
-  private onReady(params) {
+   onReady(params) {
     this.api = params.api;
     this.columnApi = params.columnApi;
 }
 rowData: any = [];
 
-search() {
-  this.http.get<Stats>('http://localhost:8080/player/timeline?end=2019-08-04&name='+this.firstName+'&start=2012-08-04&surname='+this.lastName+'').subscribe(data => {
-  console.log(data);
-  this.gridOptions.rowData = data.stats;
-  this.cumulativeStat = data.cumulativeStats;
-  this.columnApi.autoSizeAllColumns();
-this.userPic = 'https://nba-players.herokuapp.com/players/'+this.lastName+'/'+this.firstName;
-  }, err => {
-  console.log("SHIT");
-});
+ngOnInit() {
+  this.http.get<PlayerLight[]>('http://localhost:8080/player/light').subscribe(data => {
+    this.players = data;
+    }, err => {
+      this.toastr.error("SHIT");
+  });
 }
 
 }

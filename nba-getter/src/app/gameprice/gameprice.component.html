@@ -1,49 +1,53 @@
-<div class="container">
-  <div class="row border border-primary rounded p-2">
-          <input type="text" [(ngModel)]="year"[ngModelOptions]="{standalone: true}" class="form-control">
-          <button type="button" ngbButton (click)="search()" class="btn btn-danger btn-sm btn-block">Search</button> 
-  </div>
-  <br>
-  <div *ngIf="yearIsSelected" class="row border border-primary rounded p-2">
-      <input [(ngModel)]="asyncSelected"
-            [typeaheadAsync]="true"
-            [typeahead]="dataSource"
-            (typeaheadLoading)="changeTypeaheadLoading($event)"
-            (typeaheadOnSelect)="typeaheadOnSelect($event)"
-            [typeaheadOptionsLimit]="82"
-            typeaheadOptionField="matchDescription"
-            placeholder="Search game"
-            class="form-control"
-            [typeaheadMinLength]="3">
-      <button type="button" ngbButton (click)="searchGamePrice()" class="btn btn-danger btn-sm btn-block">Search Price</button>
-  </div>
-  <br>
-  <div *ngIf="priceIsSelected" class="row border border-primary rounded p-2">
-    <div class="col-md-6">
-        <ag-grid-angular 
+<div class="container-fluid">
+    <div class="row p-3">
+        <div class="col-md-6 ml-auto">
+          <select class="form-control form-control-sm" [ngModel]="selectedYear" (ngModelChange)="onChange($event)" name="sel2">
+              <option [value]="y" *ngFor="let y of years">{{y}}</option>
+          </select>
+        </div>
+        <div class="col-md-6 ml-auto">
+              <input [(ngModel)]="asyncSelected"
+                    [typeaheadAsync]="true"
+                    [typeahead]="dataSource"
+                    (typeaheadLoading)="changeTypeaheadLoading($event)"
+                    (typeaheadOnSelect)="typeaheadOnSelect($event)"
+                    [typeaheadOptionsLimit]="82"
+                    typeaheadOptionField="matchDescription"
+                    placeholder="Search game"
+                    class="form-control form-control-sm"
+                    [typeaheadMinLength]="3">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 ml-auto">
+      <ag-grid-angular 
           style="width: 560px; height: 300px;" 
           class="ag-theme-balham"
           [rowData]="gridOptionsHome.rowData"
           [columnDefs]="gridOptionsHome.columnDefs"
           (gridReady)="onReady($event)">
-        </ag-grid-angular>
-    </div>
-    <div class="col-md-6">
-        <ag-grid-angular 
+      </ag-grid-angular>
+      </div>
+      <div class="col-md-6 ml-auto">
+      <ag-grid-angular 
         style="width: 560px; height: 300px;" 
         class="ag-theme-balham"
         [rowData]="gridOptionsAway.rowData"
         [columnDefs]="gridOptionsAway.columnDefs"
         (gridReady)="onReady($event)">
       </ag-grid-angular>
+      </div>
     </div>
-  </div>
-  <div *ngIf="priceIsSelected" class="row">
-    <h1>{{homeSturcture.name}}</h1>
-    <h2>{{homeSturcture.value}}</h2>
-  </div>
-  <div *ngIf="priceIsSelected" class="row">
-    <h1>{{awayStructure.name}}</h1>
-    <h2>{{awayStructure.value}}</h2>
-  </div>
+  <div class="row">
+      <div class="col-md-6 ml-auto">
+        <h1>{{homeSturcture.name}}</h1>
+        <h2>{{homeSturcture.formattedValue}}</h2>
+    </div>
+    <div class="col-md-6 ml-auto">
+        <h1>{{awayStructure.name}}</h1>
+        <h2>{{awayStructure.formattedValue}}</h2>
+    </div>
+    
 </div>
+</div>
+<ngx-spinner></ngx-spinner>

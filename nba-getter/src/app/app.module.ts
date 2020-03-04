@@ -16,6 +16,9 @@ import { TimelineComponent } from './timeline/timeline.component';
 import { AppRoutingModule } from './app-routing.module';
 import { GamepriceComponent } from './gameprice/gameprice.component';
 import { TeamrosterComponent } from './teamroster/teamroster.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { GamescoreLineChartComponent } from './gamescore-line-chart/gamescore-line-chart.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -24,7 +27,8 @@ import { TeamrosterComponent } from './teamroster/teamroster.component';
     CumulativestatsComponent,
     TimelineComponent,
     GamepriceComponent,
-    TeamrosterComponent
+    TeamrosterComponent,
+    GamescoreLineChartComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +38,9 @@ import { TeamrosterComponent } from './teamroster/teamroster.component';
   AgGridModule.withComponents(),
   AppRoutingModule,
   BrowserAnimationsModule,
-  TypeaheadModule.forRoot()
+  TypeaheadModule.forRoot(),
+  NgxSpinnerModule,
+  ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
